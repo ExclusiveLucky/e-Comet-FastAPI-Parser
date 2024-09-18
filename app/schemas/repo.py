@@ -1,4 +1,6 @@
+
 from pydantic import BaseModel
+from typing import Optional
 
 class RepoSchema(BaseModel):
     """
@@ -7,12 +9,12 @@ class RepoSchema(BaseModel):
     repo_name: str
     owner: str
     position_cur: int
-    position_prev: int
+    position_prev: Optional[int]
     stars: int
     watchers: int
     forks: int
     open_issues: int
-    language: str
+    language: Optional[str]
 
     class Config:
         orm_mode = True
