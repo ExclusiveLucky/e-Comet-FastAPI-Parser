@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    # Используем образ PostgreSQL версии 15.
+    image: postgres:15
+    # Переменные окружения для базы данных: пользователь, пароль, имя базы данных.
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: repos_db
+    # Для сохранения данных базы вне контейнера.
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  web:
+    # Собираем образ приложения с помощью Dockerfile.
+    build: .
+    # Указываем, что веб-приложение должно запускаться после базы данных.
+    depends_on:
+      - db
+    # Устанавливаем переменную DATABASE_URL для подключения к базе данных.
+    environment:
+      DATABASE_URL: postgres://user:password@db:5432/repos_db
+    # Прокидываем порт 8000 для доступа к приложению.
+    ports:
+      - "8000:8000"
+volumes:
+  postgres_data:
