@@ -26,11 +26,11 @@ def fetch_top_repos():
     }
 
     response = requests.get(GITHUB_API_URL, headers=headers, params=params)
-
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail="Ошибка при запросе к GitHub API")
 
     return response.json().get("items", [])
+
 
 
 def save_to_db(repos):
@@ -57,15 +57,13 @@ def save_to_db(repos):
                 )
                 for idx, repo in enumerate(repos)
             ]
-            
-            execute_values(cursor, query, values)
+            execute_values(cursor, query, values, template=None)
         conn.commit()
     except psycopg2.Error as e:
         conn.rollback()
-        raise HTTPException(status_code=500, detail="Ошибка при сохранении данных в базу")
+        raise HTTPException(status_code=500, detail=f"Ошибка при сохранении данных в базу: {e}")
     finally:
         conn.close()
-
 
 def run():
     """
@@ -78,5 +76,7 @@ def run():
         else:
             raise HTTPException(status_code=404, detail="Не удалось получить репозитории")
     except Exception as e:
-        # Логирование ошибки (добавьте реальный логгер в вашем проекте)
         print(f"Ошибка во время выполнения парсинга: {e}")
+
+if __name__ == "__main__":
+    run()
